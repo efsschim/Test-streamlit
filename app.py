@@ -55,11 +55,11 @@ def build_time_index(days: int = 30) -> pd.DatetimeIndex:
 
 
 @st.cache_data(show_spinner=False)
-def build_traffic_data(index: Iterable[pd.Timestamp]) -> pd.DataFrame:
+def build_traffic_data(_index: Iterable[pd.Timestamp]) -> pd.DataFrame:
     rng = np.random.default_rng(seed=42)
     records = []
 
-    for timestamp in index:
+    for timestamp in _index:
         hour = timestamp.hour
         daily_factor = 1.2 if timestamp.weekday() < 5 else 0.8
         rush_hour = 1.8 if hour in range(7, 10) or hour in range(16, 19) else 1.0
@@ -91,11 +91,11 @@ ENERGY_SOURCES = ("Solar", "Wind", "Wasserkraft", "Biomasse", "Import")
 
 
 @st.cache_data(show_spinner=False)
-def build_energy_data(index: Iterable[pd.Timestamp]) -> pd.DataFrame:
+def build_energy_data(_index: Iterable[pd.Timestamp]) -> pd.DataFrame:
     rng = np.random.default_rng(seed=123)
     records = []
 
-    for timestamp in index:
+    for timestamp in _index:
         hour = timestamp.hour
         demand_base = 300 + 40 * math.sin((hour - 6) / 24 * 2 * math.pi) + rng.normal(0, 10)
         demand_season = 50 * math.sin((timestamp.timetuple().tm_yday / 365) * 2 * math.pi)
