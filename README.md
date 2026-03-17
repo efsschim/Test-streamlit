@@ -34,7 +34,7 @@ Starten Sie das Dashboard lokal mit:
 
 ```bash
 streamlit run app.py
-```
+`````
 
 Die App wird standardmäßig unter <http://localhost:8501> erreichbar sein. Verwenden Sie die Sidebar,
 um Zeiträume, Regionen und Vergleichsansichten interaktiv zu steuern.
