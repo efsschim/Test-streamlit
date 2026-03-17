@@ -45,6 +45,10 @@ TRAFFIC_SENSORS: tuple[Sensor, ...] = (
     Sensor("T-401", "Ostring", "Ost", 52.515, 13.515),
     Sensor("T-501", "Westtangente", "West", 52.495, 13.295),
 )
+# Streamlit cache configuration ---------------------------------------------
+CACHE_HASH_FUNCS = {pd.DatetimeIndex: lambda _: None}
+
+
 @st.cache_data(show_spinner=False)
 def build_time_index(days: int = 30) -> pd.DatetimeIndex:
     """Return hourly timestamps for the last ``days`` days."""
@@ -54,12 +58,13 @@ def build_time_index(days: int = 30) -> pd.DatetimeIndex:
     return pd.date_range(start=start, end=end, freq="1h")
 
 
-@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False, hash_funcs=CACHE_HASH_FUNCS)
 def build_traffic_data(_index: Iterable[pd.Timestamp]) -> pd.DataFrame:
     rng = np.random.default_rng(seed=42)
     records = []
+    timestamps = list(_index)
 
-    for timestamp in _index:
+    for timestamp in timestamps:
         hour = timestamp.hour
         daily_factor = 1.2 if timestamp.weekday() < 5 else 0.8
         rush_hour = 1.8 if hour in range(7, 10) or hour in range(16, 19) else 1.0
@@ -90,12 +95,13 @@ def build_traffic_data(_index: Iterable[pd.Timestamp]) -> pd.DataFrame:
 ENERGY_SOURCES = ("Solar", "Wind", "Wasserkraft", "Biomasse", "Import")
 
 
-@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False, hash_funcs=CACHE_HASH_FUNCS)
 def build_energy_data(_index: Iterable[pd.Timestamp]) -> pd.DataFrame:
     rng = np.random.default_rng(seed=123)
     records = []
+    timestamps = list(_index)
 
-    for timestamp in _index:
+    for timestamp in timestamps:
         hour = timestamp.hour
         demand_base = 300 + 40 * math.sin((hour - 6) / 24 * 2 * math.pi) + rng.normal(0, 10)
         demand_season = 50 * math.sin((timestamp.timetuple().tm_yday / 365) * 2 * math.pi)
